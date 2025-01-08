@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.ejemplo_simple.business.PeopleBusiness;
 import com.example.ejemplo_simple.model.PeopleModel;
 import com.example.ejemplo_simple.service.PeopleService;
 
@@ -20,61 +21,51 @@ import com.example.ejemplo_simple.service.PeopleService;
 @RequestMapping("/api/people")
 public class PeopleController {
 
+    private final PeopleBusiness peopleBusiness;
 
-    private final PeopleService peopleService;
-
-    public PeopleController(PeopleService peopleService) {
-        this.peopleService = peopleService;
- 
- 
+    public PeopleController(PeopleBusiness peopleBusiness) {
+        this.peopleBusiness = peopleBusiness;
     }
-    @GetMapping("/all")
+
+    @GetMapping
     public List<PeopleModel> getAllPeople() {
-        return peopleService.getAllPeople();
+        return peopleBusiness.getAllPeople();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<PeopleModel> getPersonById(@PathVariable String id) {
-        return peopleService.getPersonById(id)
+        return peopleBusiness.getPersonById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
-
     @PostMapping
     public PeopleModel createPerson(@RequestBody PeopleModel person) {
-        return peopleService.createPerson(person);
+        return peopleBusiness.createPerson(person);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<PeopleModel> updatePerson(@PathVariable String id, @RequestBody PeopleModel updatedPerson) {
         try {
-            return ResponseEntity.ok(peopleService.updatePerson(id, updatedPerson));
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.ok(peopleBusiness.updatePerson(id, updatedPerson));
+        } catch (IllegalStateException | IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);
         }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePerson(@PathVariable String id) {
-        peopleService.deletePerson(id);
+        peopleBusiness.deletePerson(id);
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/search/name")
-    public List<PeopleModel> searchByName(@RequestParam String name) {
-        return peopleService.getPeopleByName(name);
+    @GetMapping("/search/status")
+    public List<PeopleModel> searchByStatus(@RequestParam String status) {
+        try {
+            return peopleBusiness.getPeopleByStatus(status);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
-
-    @GetMapping("/search/age")
-    public List<PeopleModel> searchByAgeRange(@RequestParam int minAge, @RequestParam int maxAge) {
-        return peopleService.getPeopleByAgeRange(minAge, maxAge);
-    }
-
-    @GetMapping("/search/hobby")
-    public List<PeopleModel> searchByHobby(@RequestParam String hobby) {
-        return peopleService.getPeopleByHobby(hobby);
-    }
-   
 
 }

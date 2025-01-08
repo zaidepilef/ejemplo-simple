@@ -42,21 +42,23 @@ public class PeopleService {
                 .orElseThrow(() -> new RuntimeException("Person not found with id " + id));
     }
 
-   
-
-    public List<PeopleModel> getPeopleByName(String name) {
-        return peopleRepository.findByName(name);
-    }
-
-    public List<PeopleModel> getPeopleByAgeRange(int minAge, int maxAge) {
-        return peopleRepository.findByAgeBetween(minAge, maxAge);
-    }
-
-    public List<PeopleModel> getPeopleByHobby(String hobby) {
-        return peopleRepository.findByHobbiesContaining(hobby);
-    }
-
+    // Eliminar una persona por su ID
     public void deletePerson(String id) {
         peopleRepository.deleteById(id);
+    }
+
+    // Buscar personas por nombre de usuario
+    public List<PeopleModel> getPeopleByUser(String user) {
+        return peopleRepository.findByUser(user);
+    }
+
+    // Buscar personas por estado
+    public List<PeopleModel> getPeopleByStatus(String status) {
+        return peopleRepository.findByStatus(status);
+    }
+
+    // Buscar personas por correo electrónico
+    public List<PeopleModel> getPeopleByEmail(String email) {
+        return peopleRepository.findByEmail(email);
     }
 }

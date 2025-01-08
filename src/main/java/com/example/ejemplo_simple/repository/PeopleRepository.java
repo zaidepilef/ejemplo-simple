@@ -9,13 +9,9 @@ import java.util.List;
 
 @Repository
 public interface PeopleRepository extends MongoRepository<PeopleModel, String> {
+    List<PeopleModel> findByUser(String user);
 
-    // Consulta personalizada para buscar personas por nombre
-    List<PeopleModel> findByName(String name);
+    List<PeopleModel> findByStatus(String status);
 
-    // Consulta personalizada para buscar personas por rango de edad
-    List<PeopleModel> findByAgeBetween(int minAge, int maxAge);
-
-    // Consulta personalizada para buscar personas por hobbies
-    List<PeopleModel> findByHobbiesContaining(String hobby);
+    List<PeopleModel> findByEmail(String email);
 }
